@@ -4,8 +4,8 @@ from qns.simulator.event import func_to_event
 from qns.network import QuantumNetwork
 from qns.utils.rnd import get_rand, get_randint
 from qns.network.requests import Request
-from REPS_Topology import SessionInfo
-from qns.entity.node.node import QNode
+from qns.entity.node import QNode
+from typing import Tuple
 import heapq
 import pulp
 import math
@@ -22,6 +22,17 @@ def get_index(n, net):
     return None
 
 
+class SessionInfo:
+    """
+    SessionInfo is a class to store the information of SD pair.
+    """
+
+    def __init__(self, id: int, sd: Tuple[QNode, QNode], W: int):
+        self.id = id
+        self.sd = sd
+        self.W = W
+
+
 class REPS_APP(Application):
     def __init__(self, net: QuantumNetwork, node: QNode, request_num=5, edge_capa=5, link_prob=0.9, node_prob=0.7):
         super().__init__()
@@ -29,6 +40,10 @@ class REPS_APP(Application):
         self.net = net
         self.request_num = request_num
         self.nodes_number = len(self.net.nodes)
+        self.edge_capa = edge_capa
+        self.link_prob = link_prob
+        self.node_prob = node_prob
+
         self.session_paths = {}
         self.session_flow = {}
         self.session_flow_int = {}
@@ -40,10 +55,6 @@ class REPS_APP(Application):
         self.session = {}
         self.session_sd = {}
         self.session_time = {}
-
-        self.edge_capa = edge_capa
-        self.link_prob = link_prob
-        self.node_prob = node_prob
 
         # info need to record
         self.f_hat = {}
@@ -789,7 +800,6 @@ class REPS_APP(Application):
         for session in self.session:
             # print(f"session {session} ECs: {self.ECs[session]}")
             self.session[session].W -= self.ECs[session]
-
         return self.ECs
 
     def Data_Process(self):
@@ -817,7 +827,6 @@ class REPS_APP(Application):
 
         # for u in range(self.nodes_number):
         #     for v in range(self.nodes_number):
-        #         # self.Eles_num[self.nodes_number] += eles_to_use[u][v]
         #         print(eles_to_use[u][v] + eles_to_use[v][u], end="\t")
         #     print()
 
@@ -848,7 +857,6 @@ class REPS_APP(Application):
             req_id = id_connum[0]
             resources = len(self.selected_path[req_id])
             conns = id_connum[1]
-            # self.Eles_num[self.nodes_number] += conns
             print(f"{req_id}\t{resources}\t{conns}\n")
 
     def REPS(self):
@@ -860,6 +868,6 @@ class REPS_APP(Application):
         self.Teleport()
         self.Data_Process()
 
-        t = self._simulator.current_time + self._simulator.time(sec=100)
-        event = func_to_event(t, self.REPS, by=self)
-        self._simulator.add_event(event)
+        # t = self._simulator.current_time + self._simulator.time(sec=100)
+        # event = func_to_event(t, self.REPS, by=self)
+        # self._simulator.add_event(event)
