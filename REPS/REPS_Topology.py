@@ -12,17 +12,6 @@ def get_destenation(node1_x, node1_y, node2_x, node2_y):
     return math.sqrt((node1_x - node2_x) ** 2 + (node1_y - node2_y) ** 2)
 
 
-class SessionInfo:
-    """
-    SessionInfo is a class to store the information of SD pair.
-    """
-
-    def __init__(self, id: int, sd: Tuple[QNode, QNode], W: int):
-        self.id = id
-        self.sd = sd
-        self.W = W
-
-
 class REPS_Topo(Topology):
     """
     RepsTopology is a class that generates a Waxman random graph.includes
@@ -30,7 +19,7 @@ class REPS_Topo(Topology):
     size(float): the size of the network
     """
 
-    def __init__(self, nodes_number: int, size: float,
+    def __init__(self, nodes_number: int, size: float = 100,
                  nodes_apps: List[Application] = [], qchannel_args: Dict = {},
                  cchannel_args: Dict = {}, qmemory_args: Dict = {},) -> None:
         super().__init__(nodes_number, nodes_apps, qchannel_args, cchannel_args, qmemory_args)
